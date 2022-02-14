@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "gonitro";
+option java_outer_classname = "GreetingsProto";
+
+// Request message used to ask for a greeting message
+// for the given username with the specified locale.
+message SayHelloRequest {
+  enum SupportedLocales {
+    EN = 0;
+    CH = 1;
+    IT = 2;
+  }
+
+  string username = 1; // the username of the use to greet
+  SupportedLocales locale = 2;   // the locale to be used to greet the user
+}
+
+// Response message with the resulting greeting message.
+message SayHelloResponse {
+  string greetings = 1; // a localized greeting for the an user
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+// The 'Greeter' service that builds and returns a nice
+// localized greetings message for a given user.
+service GreeterService {
+  // Ask the service to build a localized greeting
+  rpc SayHello (SayHelloRequest) returns (SayHelloResponse) {}
+
+  // Ask the service to build a localized greeting and
+  // continuosly stream it to the client.
+  rpc KeepSayingHello (SayHelloRequest) returns (stream SayHelloResponse) {}
+
+  // Will collect all the requests and build a localized
+  // greeting for all of them.
+  rpc SayHelloToEveryone (stream SayHelloRequest) returns (SayHelloResponse) {}
+
+  // For each request is will emit a localized greeting.
+  rpc SayHelloForeachOne (stream SayHelloRequest) returns (stream SayHelloResponse) {}
+}

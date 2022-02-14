@@ -1,36 +1,102 @@
-# Akka gRPC Quickstart with Scala
+# Akka gRPC quickstart
 
-## Quickstart guide
+*Highly opinionated* fork of the Lightbend Akka gRPC G8 template.
 
-This example is described in the [Akka gRPC Quickstart with Scala guide](https://developer.lightbend.com/guides/akka-grpc-quickstart-scala/)
+Out of the box, it provides:
 
-The Hello World example illustrates Akka gRPC basics. Within 30 minutes, you should be able to download and run the example and use this guide to understand how the example is constructed.
+* Fully functional Akka gRPC service
+* JWT authentication support
+* Basic GitHub Actions workflow
+* Helpers to fetch config values from the environment
+* Setup for structured logging
+* Basic healthcheck
+* Customized build.sbt
+* Scalafmt setup
+* Docker image creation and publishing support
+* Always latest stable releases of required dependencies
+* Support for code coverage
+* Scalafix linter and rules
+* DataDog APM enabled
+* ScalaSteward setup (with Pull Request auto-merge)
+* (Optional) DynamoDB setup with Localstack for testing
+* ArgoCD support with Canary rollout
 
-## Giter8 template
-
-It can also be used as a [Giter8][g8] template for Akka with Scala.
+## Usage
 
 Prerequisites:
-- JDK 11
-- [sbt][sbt] 1.4.x or higher ([download here][sbt_download])
+- JDK 11+
+- sbt 1.13.13+
 
-Open a console and run the following command to apply this template:
- ```
-sbt new akka/akka-grpc-quickstart-scala.g8
- ```
+Assuming that you have access to the private repository, in the
+console, type:
 
-This template will prompt for the name of the project. Press `Enter` if the default values suit you.
+```sh
+sbt new git@github.com/umatrangolo/akka-grpc-quickstart-scala.g8.git
+```
 
-Once inside the project folder, follow the [Akka gRPC Quickstart with Scala guide](https://developer.lightbend.com/guides/akka-grpc-quickstart-scala/) run both the server and the client and also to learn more about how this Hello World project works.
+This template will prompt for a set of parameters asking for the
+desired versions of all the dependencies; you can just press enter on
+the proposed choices given that they are the latest stable versions
+found on the Maven repository.
 
-## Template license
+However, these are the ones that you will need to fill correctly:
 
-Written in 2018 by Lightbend, Inc.
+| Name | Description |
+|------|-------------|
+|name  | Becomes the name of the project (e.g. foo-svc) |
+|description | Used to bootstrap README.md for the app |
+|organization | The organization owning this app (e.g. example) |
+|codeowners | Content of the GitHub CODEOWNERS file |
+|package | Starting package (e.g. foo.bar) |
+|docker_maintainer| Email of the maintainer of this app |
+|docker_package_name| Specifies the package name for Docker (e.g. gonitro/foo-svc) |
+|k8s_ns| Namespace where the service will be running |
 
-To the extent possible under law, the author(s) have dedicated all copyright and related
-and neighboring rights to this template to the public domain worldwide.
-This template is distributed without any warranty. See <http://creativecommons.org/publicdomain/zero/1.0/>.
+## Running
 
-[g8]: http://www.foundweekends.org/giter8/
-[sbt]: http://www.scala-sbt.org/
-[sbt_download]: http://www.scala-sbt.org/download.html
+The generated service is runnable out of the box and it is ready to be
+deployed wout any required further intervention. To start
+locally:
+
+```
+sbt run
+```
+
+that listens on port 9000 and answering on a simple healthcheck.
+```
+grpcurl -v --plaintext  localhost:9000 grpc.health.v1.Health/Check
+```
+
+More options are in the generated service README.
+
+## CI/CD setup
+
+The template will use GitHub actions to implement a basic CI/CD
+pipeline. The (optional) CD is implemented by just pushing the Docker
+image to AWS ECR after each merge to master/main.
+
+We have three different pipelines with their jobs:
+
+* **CI**
+  - *lint*: lints your code (e.g. checks formatting)
+  - *test*: compiles and runs tests checking also for coverage
+* **CD**
+  - *build*: builds and pushes the Docker image
+* **Scala Steward**
+  - *scala-steward*: each Sunday it opens a lot of PRs proposing
+    dependencies updates (that will be auto-merged on a green build)
+
+## References
+
+* [g8](http://www.foundweekends.org/giter8/)
+* [GitHub actions](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions)
+* [SBT Coverage](https://github.com/scoverage/sbt-scoverage)
+* [API Builder](https://www.apibuilder.io/)
+* [SBT API Builder](https://github.com/sirocchj/sbt-api-builder)
+* [SBT Dot Env](https://github.com/mefellows/sbt-dotenv)
+* [Logstash Logback Encoder](https://github.com/logstash/logstash-logback-encoder)
+* [Scalafmt](https://scalameta.org/scalafmt/)
+* [Scalafix](https://scalacenter.github.io/scalafix/)
+* [SBT Datadog](https://github.com/Colisweb/sbt-datadog)
+* [Scala Steward](https://github.com/scala-steward-org/scala-steward)
+* [LocalStack](https://localstack.cloud/)
