@@ -1,15 +1,18 @@
 package $package$
 
 import akka.actor.ActorSystem
-import akka.grpc.scaladsl.{ServiceHandler, ServerReflection}
+import akka.grpc.scaladsl.ServerReflection
+import akka.grpc.scaladsl.ServiceHandler
 import akka.http.scaladsl.Http
 import com.typesafe.config.ConfigFactory
-import io.grpc.health.v1.{Health, HealthHandler}
-import java.time.Instant
-import org.slf4j.LoggerFactory
-import scala.concurrent.{ExecutionContext, Future}
-
 import $package$._
+import io.grpc.health.v1.Health
+import io.grpc.health.v1.HealthHandler
+import org.slf4j.LoggerFactory
+
+import java.time.Instant
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 object GreeterServer {
   val logger = LoggerFactory.getLogger(this.getClass)

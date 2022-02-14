@@ -1,14 +1,16 @@
 package $package$
 
-import $package$.{SayHelloRequest, SayHelloResponse}
-import scala.concurrent.Future
-import org.slf4j.LoggerFactory
-import com.google.protobuf.timestamp.Timestamp
-import java.time._
-import akka.stream.scaladsl._
-import akka.stream.Materializer
 import akka.grpc.GrpcServiceException
+import akka.stream.Materializer
+import akka.stream.scaladsl._
+import com.google.protobuf.timestamp.Timestamp
+import io.corecursive.coffeemaker.SayHelloRequest
+import io.corecursive.coffeemaker.SayHelloResponse
 import io.grpc.Status
+import org.slf4j.LoggerFactory
+
+import java.time._
+import scala.concurrent.Future
 import scala.concurrent.duration._
 
 object GreeterServiceImpl {

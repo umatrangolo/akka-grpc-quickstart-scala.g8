@@ -1,12 +1,13 @@
 package $package$
 
-import akka.stream.scaladsl._
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.grpc.GrpcClientSettings
+import akka.stream.scaladsl._
 import akka.stream.testkit.scaladsl._
 
+import com.google.protobuf.timestamp.Timestamp
 import com.typesafe.config.ConfigFactory
 
 import org.scalatest.BeforeAndAfterAll
@@ -15,7 +16,6 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration._
-import com.google.protobuf.timestamp.Timestamp
 
 class GreeterSpec extends AnyWordSpec with BeforeAndAfterAll with Matchers with ScalaFutures {
   implicit val patience: PatienceConfig = PatienceConfig(scaled(5.seconds), scaled(100.millis))

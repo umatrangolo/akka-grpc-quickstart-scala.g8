@@ -1,9 +1,10 @@
 package $package$
 
-import org.slf4j.LoggerFactory
-import io.grpc.health.v1._
-import scala.concurrent.Future
 import akka.stream.scaladsl._
+import io.grpc.health.v1._
+import org.slf4j.LoggerFactory
+
+import scala.concurrent.Future
 
 object HealthServiceImpl {
   val logger = LoggerFactory.getLogger(this.getClass)
