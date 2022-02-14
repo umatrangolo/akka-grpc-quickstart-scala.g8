@@ -91,8 +91,6 @@ We have three different pipelines with their jobs:
 * [g8](http://www.foundweekends.org/giter8/)
 * [GitHub actions](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions)
 * [SBT Coverage](https://github.com/scoverage/sbt-scoverage)
-* [API Builder](https://www.apibuilder.io/)
-* [SBT API Builder](https://github.com/sirocchj/sbt-api-builder)
 * [SBT Dot Env](https://github.com/mefellows/sbt-dotenv)
 * [Logstash Logback Encoder](https://github.com/logstash/logstash-logback-encoder)
 * [Scalafmt](https://scalameta.org/scalafmt/)
