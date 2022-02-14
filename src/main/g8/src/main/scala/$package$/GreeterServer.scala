@@ -1,16 +1,15 @@
-package gonitro
+package $package$
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
+import akka.grpc.scaladsl.{ ServiceHandler, ServerReflection }
 import akka.http.scaladsl.Http
 import com.typesafe.config.ConfigFactory
-import gonitro._
-import scala.concurrent.{ ExecutionContext, Future }
-import org.slf4j.LoggerFactory
-import java.time.Instant
-import io.grpc.protobuf.services._
-import akka.grpc.scaladsl.{ ServiceHandler, ServerReflection }
 import io.grpc.health.v1.{ Health, HealthHandler }
+import java.time.Instant
+import org.slf4j.LoggerFactory
+import scala.concurrent.{ ExecutionContext, Future }
+
+import $package$._
 
 object GreeterServer {
   val logger = LoggerFactory.getLogger(this.getClass)
@@ -21,7 +20,7 @@ object GreeterServer {
       .withFallback(ConfigFactory.defaultApplication())
     val system = ActorSystem("GreeterServer", conf)
     implicit val ec: ExecutionContext = system.dispatcher
-    new GreeterServer(system, () => Instant.now()).run().foreach(_ => logger.info("Server started at port 8080/8081"))
+    new GreeterServer(system, () => Instant.now()).run().foreach(_ => logger.info("Server started at port 9000"))
   }
 }
 

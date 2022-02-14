@@ -1,0 +1,52 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Docker
+    runs-on: [self-hosted, linux, x64]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure Nexus Credentials
+      env:
+        NEXUS_CREDS_IVY2: \${{ secrets.NEXUS_CREDS_IVY2 }}
+        NEXUS_CREDS_SBT: \${{ secrets.NEXUS_CREDS_SBT }}
+      run: |
+        mkdir -p \$HOME/.ivy2 \$HOME/.sbt/0.13 \$HOME/.sbt/1.0
+        echo \${NEXUS_CREDS_IVY2} | base64 -d > \$HOME/.ivy2/.credentials
+        echo \${NEXUS_CREDS_SBT} | base64 -d > \$HOME/.sbt/0.13/credentials.sbt
+        echo \${NEXUS_CREDS_SBT} | base64 -d > \$HOME/.sbt/1.0/credentials.sbt
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Assume IAM role for ECR push
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: eu-central-1
+        role-to-assume: arn:aws:iam::574097476646:role/github-action-runner/github-action-runner-ecr-role
+        role-duration-seconds: 1200
+        role-session-name: ecr
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+    - run: echo "TAG=\$(git rev-parse --short HEAD)" >> \$GITHUB_ENV
+    - name: Docker build
+      run: sbt docker:publishLocal
+    - name: Push Docker image(s)
+      run: |
+        DOCKER_IMAGE="574097476646.dkr.ecr.eu-central-1.amazonaws.com/nitro/prod/$name$"
+        docker tag $name$:\$TAG \$DOCKER_IMAGE:\$TAG
+        docker push \$DOCKER_IMAGE:\$TAG
+    - name: Trigger Argo CD sync
+      env:
+        ARGOCD_SERVER: argocd-dev.ec1.nitro.us
+        ARGOCD_AUTH_TOKEN: \${{ secrets.ARGOCD_ROBOT_TOKEN }}
+      run: |
+        curl -sSL -o argocd https://\$ARGOCD_SERVER/download/argocd-linux-amd64
+        chmod +x argocd
+        ./argocd --grpc-web app set $name$ -p appVersion=\${{ env.TAG }}
+        ./argocd --grpc-web app sync $name$ --prune
+        ./argocd --grpc-web app wait $name$

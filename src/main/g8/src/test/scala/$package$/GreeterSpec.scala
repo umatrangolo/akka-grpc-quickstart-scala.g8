@@ -1,4 +1,4 @@
-package gonitro
+package $package$
 
 import akka.stream.scaladsl._
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
@@ -43,14 +43,14 @@ class GreeterSpec
   implicit val clientSystem: ActorSystem[_] = ActorSystem(Behaviors.empty, "GreeterClient")
 
   val client =
-    GreeterServiceClient(GrpcClientSettings.fromConfig("gonitro.GreeterService"))
+    GreeterServiceClient(GrpcClientSettings.fromConfig("GreeterService"))
 
   override def afterAll(): Unit = {
     ActorTestKit.shutdown(clientSystem)
     testKit.shutdownTestKit()
   }
 
-  import gonitro.SayHelloRequest._
+  import $package$.SayHelloRequest._
 
   "GreeterService" should {
     "reply to single request" in {

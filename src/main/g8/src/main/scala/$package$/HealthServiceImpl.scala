@@ -1,4 +1,4 @@
-package gonitro
+package $package$
 
 import org.slf4j.LoggerFactory
 import io.grpc.health.v1._

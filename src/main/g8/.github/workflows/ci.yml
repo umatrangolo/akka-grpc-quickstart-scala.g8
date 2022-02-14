@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - '**'
+    - '!main'
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: [self-hosted, linux, x64]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure Nexus Credentials
+      env:
+        NEXUS_CREDS_IVY2: \${{ secrets.NEXUS_CREDS_IVY2 }}
+        NEXUS_CREDS_SBT: \${{ secrets.NEXUS_CREDS_SBT }}
+      run: |
+        mkdir -p \$HOME/.ivy2 \$HOME/.sbt/0.13 \$HOME/.sbt/1.0
+        echo \${NEXUS_CREDS_IVY2} | base64 -d > \$HOME/.ivy2/.credentials
+        echo \${NEXUS_CREDS_SBT} | base64 -d > \$HOME/.sbt/0.13/credentials.sbt
+        echo \${NEXUS_CREDS_SBT} | base64 -d > \$HOME/.sbt/1.0/credentials.sbt
+    - name: ScalaFmt check
+      run: sbt scalafmtCheckAll
+    - name: ScalaFix check
+      run: sbt scalafixAll
+    - name: GitLeaks
+      uses: zricethezav/gitleaks-action@master
+
+  build:
+    name: Build
+    runs-on: [self-hosted, linux, x64]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure Nexus Credentials
+      env:
+        NEXUS_CREDS_IVY2: \${{ secrets.NEXUS_CREDS_IVY2 }}
+        NEXUS_CREDS_SBT: \${{ secrets.NEXUS_CREDS_SBT }}
+      run: |
+        mkdir -p \$HOME/.ivy2 \$HOME/.sbt/0.13 \$HOME/.sbt/1.0
+        echo \${NEXUS_CREDS_IVY2} | base64 -d > \$HOME/.ivy2/.credentials
+        echo \${NEXUS_CREDS_SBT} | base64 -d > \$HOME/.sbt/0.13/credentials.sbt
+        echo \${NEXUS_CREDS_SBT} | base64 -d > \$HOME/.sbt/1.0/credentials.sbt
+    - name: Setup JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Run tests
+      run: sbt coverage test
+    - name: Check Code Coverage
+      run: sbt coverageReport
+
+  # If (i) the event was a 'pull_request' and (ii) the target branch is
+  # 'main' and (iii) the feature branch starts with 'update/' then we
+  # can auto-merge iff the build is fine.
+  # TODO: conditional on 'github.actor'. Atm it is awkward cause the actor
+  #       will be the owner of the GitHub token that is used by Scala Steward to
+  #       open prs around (that would be me).
+  auto-merge:
+    name: Auto merge Scala Steward pull requests
+    if: \${{ github.event_name == 'pull_request' && github.base_ref == 'main' && startsWith(github.head_ref, 'update/') }}
+    needs:
+      - build
+    runs-on: [self-hosted, linux, x64]
+    steps:
+    - name: Auto Merge Scala-Steward Pull Request
+      uses: desbo/merge-pr-action@v0
+      with:
+        GITHUB_TOKEN: \${{ secrets.SCALA_STEWARD_PAT }}
+        ALLOWED_UPDATE: major
+        MERGE_METHOD: squash
