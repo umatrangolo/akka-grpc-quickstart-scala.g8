@@ -11,6 +11,7 @@ object HealthServiceImpl {
 
 // TODO: real healthcheck (re-using the impl from grpc-java)
 class HealthServiceImpl extends Health {
-  override def check(in: HealthCheckRequest): Future[HealthCheckResponse] = Future.successful(HealthCheckResponse(HealthCheckResponse.ServingStatus.SERVING))
+  override def check(in: HealthCheckRequest): Future[HealthCheckResponse] =
+    Future.successful(HealthCheckResponse(HealthCheckResponse.ServingStatus.SERVING))
   override def watch(in: HealthCheckRequest): Source[HealthCheckResponse, akka.NotUsed] = ???
 }

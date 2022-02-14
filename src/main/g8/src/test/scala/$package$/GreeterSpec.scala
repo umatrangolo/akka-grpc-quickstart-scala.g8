@@ -17,25 +17,21 @@ import org.scalatest.wordspec.AnyWordSpec
 import scala.concurrent.duration._
 import com.google.protobuf.timestamp.Timestamp
 
-class GreeterSpec
-  extends AnyWordSpec
-  with BeforeAndAfterAll
-  with Matchers
-  with ScalaFutures {
-
+class GreeterSpec extends AnyWordSpec with BeforeAndAfterAll with Matchers with ScalaFutures {
   implicit val patience: PatienceConfig = PatienceConfig(scaled(5.seconds), scaled(100.millis))
 
   // important to enable HTTP/2 in server ActorSystem's config
-  val conf = ConfigFactory.parseString("akka.http.server.preview.enable-http2 = on")
+  val conf = ConfigFactory
+    .parseString("akka.http.server.preview.enable-http2 = on")
     .withFallback(ConfigFactory.defaultApplication())
 
   val testKit = ActorTestKit(conf)
 
   val now = java.time.Instant.now()
-  val ts = Some(Timestamp(now.getEpochSecond(), 0))
+  val ts  = Some(Timestamp(now.getEpochSecond(), 0))
 
   val serverSystem: ActorSystem[Nothing] = testKit.system
-  val bound = new GreeterServer(serverSystem.classicSystem, () => now).run()
+  val bound                              = new GreeterServer(serverSystem.classicSystem, () => now).run()
 
   // make sure server is bound before using client
   bound.futureValue
@@ -58,19 +54,31 @@ class GreeterSpec
       reply.futureValue should ===(SayHelloResponse("Hello, Alice", ts))
     }
 
-    "reply with multiple response for a single request" in {
+    "reply with multiple responses for a single request" in {
       val reply = client.keepSayingHello(SayHelloRequest("Alice", SupportedLocales.EN))
-      reply.runWith(TestSink[SayHelloResponse]()).request(3).expectNextN(List(SayHelloResponse("Ciao, Alice", ts), SayHelloResponse("Hello, Alice", ts), SayHelloResponse("你好, Alice", ts))).expectComplete()
+      reply.runWith(TestSink[SayHelloResponse]())
+        .request(3)
+        .expectNextN(
+          List(SayHelloResponse("Ciao, Alice", ts), SayHelloResponse("Hello, Alice", ts), SayHelloResponse("你好, Alice", ts))
+        ).expectComplete()
     }
 
     "reply with a single response to multiple requests" in {
-      val reply = client.sayHelloToEveryone(Source(List(SayHelloRequest("Oscar", SupportedLocales.EN), SayHelloRequest("Matteo", SupportedLocales.IT))))
+      val reply = client.sayHelloToEveryone(
+        Source(List(SayHelloRequest("Oscar", SupportedLocales.EN), SayHelloRequest("Matteo", SupportedLocales.IT)))
+      )
       reply.futureValue should ===(SayHelloResponse("Hello Oscar, Matteo, ", ts))
     }
 
     "reply with multiple responses to multiple requests" in {
-      val reply = client.sayHelloForeachOne(Source(List(SayHelloRequest("Oscar", SupportedLocales.EN), SayHelloRequest("Matteo", SupportedLocales.IT))))
-      reply.runWith(TestSink[SayHelloResponse]()).request(3).expectNextN(List(SayHelloResponse("Hello, Oscar", ts), SayHelloResponse("Ciao, Matteo", ts))).expectComplete()
+      val reply = client.sayHelloForeachOne(
+        Source(List(SayHelloRequest("Oscar", SupportedLocales.EN), SayHelloRequest("Matteo", SupportedLocales.IT)))
+      )
+      reply
+        .runWith(TestSink[SayHelloResponse]())
+        .request(3)
+        .expectNextN(List(SayHelloResponse("Hello, Oscar", ts), SayHelloResponse("Ciao, Matteo", ts)))
+        .expectComplete()
     }
   }
 }
