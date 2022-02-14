@@ -5,9 +5,7 @@
 Out of the box, it provides:
 
 * Fully functional Akka gRPC service
-* JWT authentication support
 * Basic GitHub Actions workflow
-* Helpers to fetch config values from the environment
 * Setup for structured logging
 * Basic healthcheck
 * Customized build.sbt
@@ -16,10 +14,7 @@ Out of the box, it provides:
 * Always latest stable releases of required dependencies
 * Support for code coverage
 * Scalafix linter and rules
-* DataDog APM enabled
 * ScalaSteward setup (with Pull Request auto-merge)
-* (Optional) DynamoDB setup with Localstack for testing
-* ArgoCD support with Canary rollout
 
 ## Usage
 
@@ -50,7 +45,6 @@ However, these are the ones that you will need to fill correctly:
 |package | Starting package (e.g. foo.bar) |
 |docker_maintainer| Email of the maintainer of this app |
 |docker_package_name| Specifies the package name for Docker (e.g. gonitro/foo-svc) |
-|k8s_ns| Namespace where the service will be running |
 
 ## Running
 
@@ -95,6 +89,4 @@ We have three different pipelines with their jobs:
 * [Logstash Logback Encoder](https://github.com/logstash/logstash-logback-encoder)
 * [Scalafmt](https://scalameta.org/scalafmt/)
 * [Scalafix](https://scalacenter.github.io/scalafix/)
-* [SBT Datadog](https://github.com/Colisweb/sbt-datadog)
 * [Scala Steward](https://github.com/scala-steward-org/scala-steward)
-* [LocalStack](https://localstack.cloud/)
