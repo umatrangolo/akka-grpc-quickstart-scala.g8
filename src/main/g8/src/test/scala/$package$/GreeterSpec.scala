@@ -31,7 +31,7 @@ class GreeterSpec extends AnyWordSpec with BeforeAndAfterAll with Matchers with 
   val ts  = Some(Timestamp(now.getEpochSecond(), 0))
 
   val serverSystem: ActorSystem[Nothing] = testKit.system
-  val bound                              = new GreeterServer(serverSystem.classicSystem, () => now).run()
+  val bound                              = new GreeterServer(serverSystem, () => now).run()
 
   // make sure server is bound before using client
   bound.futureValue
