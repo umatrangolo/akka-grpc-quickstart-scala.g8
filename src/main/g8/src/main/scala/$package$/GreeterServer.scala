@@ -21,6 +21,7 @@ import scala.util.Failure
 // TODO: Audit
 // TODO: config ?
 // TODO: 12 Factors App ?
+// TODO: https ?
 object GreeterServer {
   val logger = LoggerFactory.getLogger(this.getClass)
 

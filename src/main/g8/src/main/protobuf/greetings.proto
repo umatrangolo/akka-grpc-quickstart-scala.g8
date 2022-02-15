@@ -9,13 +9,15 @@ option java_outer_classname = "GreetingsProto";
 // Request message used to ask for a greeting message
 // for the given username with the specified locale.
 message SayHelloRequest {
+
+  // All the supported locales used to build a localized greeting.
   enum SupportedLocales {
     EN = 0;
     CH = 1;
     IT = 2;
   }
 
-  string username = 1; // the username of the use to greet
+  string username = 1;           // the username of the use to greet
   SupportedLocales locale = 2;   // the locale to be used to greet the user
 }
 
@@ -25,20 +27,21 @@ message SayHelloResponse {
   google.protobuf.Timestamp timestamp = 2;
 }
 
-// The 'Greeter' service that builds and returns a nice
-// localized greetings message for a given user.
+// The 'Greeter' service that builds and returns nice
+// localized greeting messages for a given user(s).
 service GreeterService {
-  // Ask the service to build a localized greeting
+  // Ask the service to build a localized greeting.
   rpc SayHello (SayHelloRequest) returns (SayHelloResponse) {}
 
-  // Ask the service to build a localized greeting and
-  // continuosly stream it to the client.
-  rpc KeepSayingHello (SayHelloRequest) returns (stream SayHelloResponse) {}
+  // Ask the service to build all the available localized greetings and
+  // stream them back to the client.
+  rpc SayHellos (SayHelloRequest) returns (stream SayHelloResponse) {}
 
-  // Will collect all the requests and build a localized
+  // Will collect all the requests from the incoming stream and build a localized
   // greeting for all of them.
   rpc SayHelloToEveryone (stream SayHelloRequest) returns (SayHelloResponse) {}
 
-  // For each request is will emit a localized greeting.
+  // For each request from the incoming stream will emit a localized
+  // greeting and stream it back to the caller.
   rpc SayHelloForeachOne (stream SayHelloRequest) returns (stream SayHelloResponse) {}
 }
