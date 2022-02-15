@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 */7 * *"
+
+jobs:
+  build:
+    name: JDK ${{ matrix.jvm }}
+    if: github.repository == 'umatrangolo/akka-grpc-quickstart-scala.g8'
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { jvm: "adopt:8" }
+          - { jvm: "adopt:11" }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK ${{ matrix.jvm }}
+        uses: coursier/setup-action@v1.1.2
+        with:
+          jvm: ${{ matrix.jvm }}
+
+      - name: Cache Coursier cache
+        uses: coursier/cache-action@v6.3
+
+      - name: sbt
+        run: sbt test
