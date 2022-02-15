@@ -51,33 +51,35 @@ class GreeterSpec extends AnyWordSpec with BeforeAndAfterAll with Matchers with 
   "GreeterService" should {
     "reply to single request" in {
       val reply = client.sayHello(SayHelloRequest("Alice", SupportedLocales.EN))
-      reply.futureValue should ===(SayHelloResponse("Hello, Alice", ts))
+      reply.futureValue should ===(SayHelloResponse("Hello Alice", ts))
     }
 
     "reply with multiple responses for a single request" in {
-      val reply = client.keepSayingHello(SayHelloRequest("Alice", SupportedLocales.EN))
-      reply.runWith(TestSink[SayHelloResponse]())
+      val reply = client.sayHellos(SayHelloRequest("Alice", SupportedLocales.EN))
+      reply
+        .runWith(TestSink[SayHelloResponse]())
         .request(3)
         .expectNextN(
-          List(SayHelloResponse("Ciao, Alice", ts), SayHelloResponse("Hello, Alice", ts), SayHelloResponse("你好, Alice", ts))
-        ).expectComplete()
+          List(SayHelloResponse("Hello Alice", ts), SayHelloResponse("你好 Alice", ts), SayHelloResponse("Ciao Alice", ts)),
+        )
+        .expectComplete()
     }
 
     "reply with a single response to multiple requests" in {
       val reply = client.sayHelloToEveryone(
-        Source(List(SayHelloRequest("Oscar", SupportedLocales.EN), SayHelloRequest("Matteo", SupportedLocales.IT)))
+        Source(List(SayHelloRequest("Oscar", SupportedLocales.EN), SayHelloRequest("Matteo", SupportedLocales.IT))),
       )
-      reply.futureValue should ===(SayHelloResponse("Hello Oscar, Matteo, ", ts))
+      reply.futureValue should ===(SayHelloResponse("Hello Matteo,Oscar", ts))
     }
 
     "reply with multiple responses to multiple requests" in {
       val reply = client.sayHelloForeachOne(
-        Source(List(SayHelloRequest("Oscar", SupportedLocales.EN), SayHelloRequest("Matteo", SupportedLocales.IT)))
+        Source(List(SayHelloRequest("Oscar", SupportedLocales.EN), SayHelloRequest("Matteo", SupportedLocales.IT))),
       )
       reply
         .runWith(TestSink[SayHelloResponse]())
         .request(3)
-        .expectNextN(List(SayHelloResponse("Hello, Oscar", ts), SayHelloResponse("Ciao, Matteo", ts)))
+        .expectNextN(List(SayHelloResponse("Hello Oscar", ts), SayHelloResponse("Ciao Matteo", ts)))
         .expectComplete()
     }
   }
