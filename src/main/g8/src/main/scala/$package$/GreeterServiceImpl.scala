@@ -4,8 +4,8 @@ import akka.grpc.GrpcServiceException
 import akka.stream.Materializer
 import akka.stream.scaladsl._
 import com.google.protobuf.timestamp.Timestamp
-import io.corecursive.coffeemaker.SayHelloRequest
-import io.corecursive.coffeemaker.SayHelloResponse
+import $package$.SayHelloRequest
+import $package$.SayHelloResponse
 import io.grpc.Status
 import org.slf4j.LoggerFactory
 
@@ -18,7 +18,7 @@ import scala.language.postfixOps
 // TODO: more meaningful example endpoints
 // TODO: better logging
 object GreeterServiceImpl {
-  import io.corecursive.coffeemaker.SayHelloRequest._
+  import $package$.SayHelloRequest._
 
   val logger = LoggerFactory.getLogger(this.getClass)
 
