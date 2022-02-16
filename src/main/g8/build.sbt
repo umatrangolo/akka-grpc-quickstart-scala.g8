@@ -43,6 +43,7 @@ lazy val root = (project in file(".")).
       "com.typesafe.akka"            %% "akka-actor-typed"          % akkaVersion,
       "com.typesafe.akka"            %% "akka-stream"               % akkaVersion,
       "com.typesafe.akka"            %% "akka-discovery"            % akkaVersion,
+      "com.typesafe.akka"            %% "akka-pki"                  % akkaVersion,
       "ch.qos.logback"                % "logback-classic"           % logbackVersion,
       "net.logstash.logback"          % "logstash-logback-encoder"  % logstashVersion,
       "org.typelevel"                %% "cats-core"                 % catsCoreVersion,
