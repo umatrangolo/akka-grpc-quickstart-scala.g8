@@ -90,3 +90,5 @@ We have three different pipelines with their jobs:
 * [Scalafmt](https://scalameta.org/scalafmt/)
 * [Scalafix](https://scalacenter.github.io/scalafix/)
 * [Scala Steward](https://github.com/scala-steward-org/scala-steward)
+
+ugo.matrangolo@gmail.com
