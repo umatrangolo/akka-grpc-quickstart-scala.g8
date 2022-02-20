@@ -5,6 +5,7 @@
 Out of the box, it provides:
 
 * Fully functional Akka gRPC service
+* Access log (HTTP based)
 * Basic GitHub Actions workflow
 * Setup for structured logging
 * Basic healthcheck
@@ -48,20 +49,17 @@ However, these are the ones that you will need to fill correctly:
 
 ## Running
 
-The generated service is runnable out of the box and it is ready to be
-deployed wout any required further intervention. To start
-locally:
+The generated service is runnable out of the box. To start locally:
 
 ```
 sbt run
 ```
 
 that listens on port 9000 and answering on a simple healthcheck.
-```
-grpcurl -v --plaintext  localhost:9000 grpc.health.v1.Health/Check
-```
 
-More options are in the generated service README.
+```
+grpcurl --insecure localhost:9000 grpc.health.v1.Health/Check
+```
 
 ## CI/CD setup
 
@@ -82,6 +80,8 @@ We have three different pipelines with their jobs:
 
 ## References
 
+* [Akka gRPC](https://doc.akka.io/docs/akka-grpc/current/index.html)
+* [Akka HTTP](https://doc.akka.io/docs/akka-http/current/index.html)
 * [g8](http://www.foundweekends.org/giter8/)
 * [GitHub actions](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions)
 * [SBT Coverage](https://github.com/scoverage/sbt-scoverage)
