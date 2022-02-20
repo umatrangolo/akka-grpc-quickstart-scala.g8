@@ -35,6 +35,7 @@ import scala.io.Source
 // TODO: whatever happens shutdown the actor sys or it will hang
 object GreeterServer {
   val logger = LoggerFactory.getLogger(this.getClass)
+  val access = LoggerFactory.getLogger("access")
 
   def main(args: Array[String]): Unit = {
     val conf = ConfigFactory
@@ -70,14 +71,20 @@ class GreeterServer(system: ActorSystem[_], now: () => Instant) {
     val service = ServiceHandler
       .concatOrNotFound(greeterService, healthService, reflectionService)
 
+    // Wrap everything in an Akka HTTP route
+    // ref: https://doc.akka.io/docs/akka-grpc/current/server/akka-http.html
+    import akka.http.scaladsl.server.directives.RouteDirectives
+
+    val route = Access.logTimedRequestResponse(GreeterServer.access) { RouteDirectives.handle(service) }
+
     Http()
       .newServerAt("127.0.0.1", 9000)
-      .enableHttps(serverHttpContext)
-      .bind(service)
+      .enableHttps(serveHttpContext)
+      .bind(route)
       .map(_.addToCoordinatedShutdown(hardTerminationDeadline = 10.seconds))
   }
 
-  def serverHttpContext: HttpsConnectionContext = {
+  def serveHttpContext: HttpsConnectionContext = {
     // This loads our private key from a file and decodes it following
     // the PEM standard as defined in
     // https://datatracker.ietf.org/doc/html/rfc7468
