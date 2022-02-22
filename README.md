@@ -64,16 +64,13 @@ grpcurl --insecure localhost:9000 grpc.health.v1.Health/Check
 ## CI/CD setup
 
 The template will use GitHub actions to implement a basic CI/CD
-pipeline. The (optional) CD is implemented by just pushing the Docker
-image to AWS ECR after each merge to master/main.
+pipeline.
 
 We have three different pipelines with their jobs:
 
 * **CI**
   - *lint*: lints your code (e.g. checks formatting)
   - *test*: compiles and runs tests checking also for coverage
-* **CD**
-  - *build*: builds and pushes the Docker image
 * **Scala Steward**
   - *scala-steward*: each Sunday it opens a lot of PRs proposing
     dependencies updates (that will be auto-merged on a green build)
