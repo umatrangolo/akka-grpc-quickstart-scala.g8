@@ -27,7 +27,7 @@ Assuming that you have access to the private repository, in the
 console, type:
 
 ```sh
-sbt new git@github.com/umatrangolo/akka-grpc-quickstart-scala.g8.git
+sbt new git@github.com:umatrangolo/akka-grpc-quickstart-scala.g8.git
 ```
 
 This template will prompt for a set of parameters asking for the
