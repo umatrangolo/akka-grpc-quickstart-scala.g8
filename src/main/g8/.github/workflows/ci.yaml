@@ -4,10 +4,10 @@ on:
   push:
     branches:
     - '**'
-    - '!main'
+    - '!master'
   pull_request:
     branches:
-    - main
+    - master
 
 jobs:
   lint:
@@ -37,14 +37,14 @@ jobs:
       run: sbt coverageReport
 
   # If (i) the event was a 'pull_request' and (ii) the target branch is
-  # 'main' and (iii) the feature branch starts with 'update/' then we
+  # 'master' and (iii) the feature branch starts with 'update/' then we
   # can auto-merge iff the build is fine.
   # TODO: conditional on 'github.actor'. Atm it is awkward cause the actor
   #       will be the owner of the GitHub token that is used by Scala Steward to
   #       open prs around (that would be me).
   auto-merge:
     name: Auto merge Scala Steward pull requests
-    if: \${{ github.event_name == 'pull_request' && github.base_ref == 'main' && startsWith(github.head_ref, 'update/') }}
+    if: \${{ github.event_name == 'pull_request' && github.base_ref == 'master' && startsWith(github.head_ref, 'update/') }}
     needs:
       - build
     runs-on: ubuntu-latest
