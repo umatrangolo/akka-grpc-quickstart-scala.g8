@@ -29,7 +29,7 @@ lazy val root = (project in file(".")).
     dockerExposedPorts ++= Seq(9000),
     dockerBaseImage := "$docker_base_image$",
     git.formattedShaVersion := git.gitHeadCommit.value map { sha => s"\$sha".take(7) },
-    coverageMinimum := 60,
+    coverageMinimumStmtTotal := 60,
     coverageFailOnMinimum := true,
     coverageExcludedPackages := "<empty>;.*Service.*",
     // Avoid to generate Scaladocs
