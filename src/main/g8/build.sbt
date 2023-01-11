@@ -26,6 +26,7 @@ lazy val root = (project in file(".")).
     javacOptions ++= Seq("-source", "11", "-target", "11", "-Xlint"),
     (Docker / maintainer) := "$docker_maintainer$",
     (Docker / maintainer) := "$docker_package_name$",
+    evictionErrorLevel := Level.Info,
     dockerExposedPorts ++= Seq(9000),
     dockerBaseImage := "$docker_base_image$",
     git.formattedShaVersion := git.gitHeadCommit.value map { sha => s"\$sha".take(7) },
